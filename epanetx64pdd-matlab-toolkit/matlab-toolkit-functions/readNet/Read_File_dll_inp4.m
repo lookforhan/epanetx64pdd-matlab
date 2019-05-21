@@ -104,7 +104,6 @@ for i=1:keyword_num
         else
             mid_data1=deblank(mid_data{j});
         end
-        
         mid_data2=[mid_data2,mid_data1];
     end
 %     mid_data2(1)=[];
