@@ -19,10 +19,10 @@
 [MIXING]|	%q%q%f|	%s \t %s \t %f
 [OPTIONS]|	%q%q%q|	%s \t %s \t %s
 [TIMES]|	%q%q%q|  %s \t %s \t %s
-[REPORT]|	%q%q%q|	%s \t %s \t %s
-[COORDINATES]|	%q%f%f|	%s \t %f \t %f
+[REPORT]|	%q%q%q|	%s \t %s \t %sS
+[COORDS]|	%q%f%f|	%s \t %f \t %f
 [VERTICES]|	%q%f%f|	%s \t %f \t %f
 [LABELS]|	%q%q%q%q|	%s \t %s \t %s \t% s\t
 [BACKDROP]|	%q%q%q%q%q|	%s \t %s \t %s \t %s \t %s
 [TAGS]|	%q|	%s
-
+[COORDINATES]|	%q%f%f|	%s \t %f \t %f
