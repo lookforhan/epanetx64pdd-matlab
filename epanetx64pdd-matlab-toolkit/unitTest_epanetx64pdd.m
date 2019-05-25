@@ -11,7 +11,8 @@ classdef unitTest_epanetx64pdd < matlab.unittest.TestCase
     methods(TestClassSetup) % 
         function creat_epanetx64pdd(testCase)
             net = 'C:\Users\hc042\Documents\GitHub\epanetx64pdd-matlab\brenchmarks\exeter-benchmarks\BAK\BAK.inp';
-            testCase.obj = epanetx64pdd(net);
+            testCase.obj = epanetx64pdd();
+            testCase.obj.Net_inpfile = net;
         end
     end
     methods(Test)
@@ -33,9 +34,12 @@ classdef unitTest_epanetx64pdd < matlab.unittest.TestCase
             testCase.obj.loadLibrary;
             testCase.obj.read_net;
             test1 = iscell(testCase.obj.Net_data);
-            test2 = (numel(testCase.obj.Net_data)==27*2);
+            test2 = (numel(testCase.obj.Net_data)==28*2);
             test = all([test1,test2]);
             testCase.verifyTrue(test);
+        end
+        function test_addPddParamter(testCase)
+            
         end
     end
     methods(TestClassTeardown) % 
