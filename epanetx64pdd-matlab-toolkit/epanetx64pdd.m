@@ -4,6 +4,8 @@ classdef epanetx64pdd < handle
     % net = 'C:\Users\hc042\Documents\GitHub\epanetx64pdd-matlab\brenchmarks\exeter-benchmarks\BAK\BAK.inp';
     % obj = epanetx64pdd()
     % obj.Net_inpfile = net;
+    % obj.read_net
+    % obj.
     properties
         Net_inpfile
         Net_data
@@ -83,7 +85,7 @@ classdef epanetx64pdd < handle
                 return
             end
         end
-        function creat_damage_net(obj,damage_txt,damage_net)
+        function create_damage_net(obj,damage_txt,damage_net)
             addpath([obj.Root,'\matlab-toolkit-functions\damageNet\'])
             obj.Damage_scenario_txt = damage_txt;
             obj.Damage_scenario_net = damage_net;
@@ -102,9 +104,27 @@ classdef epanetx64pdd < handle
             obj.Damage_net_data = outdata; % 输出的数据格式 暂时，需要进一步优化
             obj.err.write=Write_Inpfile5(obj.Net_data,obj.EPA_inp_format,outdata,damage_net);% 写入新管网inp
         end
+        function create_PDD_net(obj,PDDnet)
+            obj.PDD_net = PDDnet;
+            obj.enOpen(obj.Damage_scenario_net);
+            nodeCount = obj.getNodeNum();
+            for i = 1:nodeCount
+                obj.addPddParamter_Wagner_Hcritical(i,20);
+                obj.addPddParamter_Wagner_Hminimum(i,0);
+            end
+            obj.enSaveinpfile(PDDnet);
+        end
         function get_damage_info(obj)
             [ obj.err.readDamageInfo,damage_data ] = read_damage_info( obj.Damage_scenario_txt );% from 'damageNet\'
             [obj.err.changeDamgeInfo,obj.Damage_info] = ND_Execut_deterministic1(obj.Net_data,damage_data);% from 'damageNet\'
+        end
+        function clearUp(obj)
+            if isfile(obj.Temp_dll_inp)
+                delete(obj.Temp_dll_inp)
+            end
+            if isfile(obj.Temp_rpt)
+                delete(obj.Temp_rpt)
+            end
         end
     end
     methods % DLL functions
@@ -119,6 +139,19 @@ classdef epanetx64pdd < handle
                 unloadlibrary(obj.lib_name);
             end
         end
+        function enOpen(obj,inpfile)
+            [filepath,filename,~] = fileparts(inpfile);
+            rptfile = [filepath,filename,'.rpt'];
+            obj.err.enOpen = calllib(obj.lib_name,'ENopen',inpfile,rptfile,'');
+        end
+        function enSaveinpfile(obj,inpfile)
+            obj.err.enSaveinpfile = calllib(obj.lib_name,'ENsaveinpfile',inpfile);
+        end
+        function nodeCount = getNodeNum(obj)
+            [~, count1] = ENgetcount(obj.lib_name,0);
+            [~, count2] = ENgetcount(obj.lib_name,1);
+            nodeCount = count1 -count2;
+        end
     end
     methods % pdd.DLL only functions
         function addPddParamter_Wagner_Hminimum(obj,node_index,Hminimum)
@@ -129,4 +162,20 @@ classdef epanetx64pdd < handle
         end
     end
 end
+function [errcode, count] = ENgetcount(ENDLLNAME,countcode)
+count=int32(0);
+pcount=libpointer('int32Ptr',count);
+countcode=int32(countcode);
+[errcode]=calllib(ENDLLNAME,'ENgetcount',countcode,pcount);
+if errcode ;ENerror(ENDLLNAME,errcode); end
 
+count=get(pcount,'Value');
+end
+function [e] = ENerror(ENDLLNAME,errcode)    
+errstring=char(32*ones(1,80));
+errcode=int32(errcode);
+len=int32(80);
+[e,errstring] = calllib(ENDLLNAME,'ENgeterror',errcode,errstring,len);
+%errstring=get(ps,'Value');
+disp(errstring);
+end
