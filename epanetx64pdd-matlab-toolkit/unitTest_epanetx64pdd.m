@@ -11,8 +11,10 @@ classdef unitTest_epanetx64pdd < matlab.unittest.TestCase
     methods(TestClassSetup) % 
         function creat_epanetx64pdd(testCase)
             net = 'C:\Users\hc042\Documents\GitHub\epanetx64pdd-matlab\brenchmarks\exeter-benchmarks\BAK\BAK.inp';
+            damage_net = 'C:\Users\hc042\Documents\GitHub\epanetx64pdd-matlab\epanetx64pdd-matlab-toolkit\damage_BAK_net1.inp';
             testCase.obj = epanetx64pdd();
             testCase.obj.Net_inpfile = net;
+            testCase.obj.Damage_scenario_net = damage_net;
         end
     end
     methods(Test)
@@ -38,7 +40,20 @@ classdef unitTest_epanetx64pdd < matlab.unittest.TestCase
             test = all([test1,test2]);
             testCase.verifyTrue(test);
         end
-        function test_addPddParamter(testCase)
+        function test_getNoedNum(testCase) % pass
+            testCase.obj.enOpen(testCase.obj.Net_inpfile)
+            nodeCount = testCase.obj.getNodeNum();
+            testCase.verifyEqual(nodeCount,int32(35));
+        end
+        function test_enOpen(testCase) % pass
+            testCase.obj.enOpen(testCase.obj.Damage_scenario_net);
+%             testCase.verifyEqual(,0);
+        end
+        function test_enClose(testCase) % pass
+            testCase.obj.enOpen(testCase.obj.Damage_scenario_net);
+            testCase.obj.enClose();
+        end
+        function test_addPddParamter(testCase) % pass
             
         end
     end
