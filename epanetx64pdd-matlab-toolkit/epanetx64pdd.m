@@ -5,12 +5,14 @@ classdef epanetx64pdd < handle
     % obj = epanetx64pdd()
     % obj.Net_inpfile = net;
     % obj.read_net
+    % ========
     % damage_net = 'C:\Users\hc042\Documents\GitHub\epanetx64pdd-matlab\epanetx64pdd-matlab-toolkit\damage_BAK_net.inp';
     % obj = epanetx64pdd()
     % obj.Damage_scenario_net = damage_net;
     % obj.read_PDD_parameter('BAK_PDD_parameter.txt')
-    % 
     % obj.create_PDD_net
+    % ========
+    % 
     properties
         Net_inpfile
         Net_data
@@ -38,6 +40,14 @@ classdef epanetx64pdd < handle
     properties
         lib_name = 'EPANETx64PDD';
         h_name = 'toolkit.h';
+    end
+    properties % recovery 
+        Recovery_crews % ĞŞ¸´¶ÓÎé
+        Isolate_pipes % ¸ôÀë¹Ü¶Î´ÎĞò
+        Repair_pipes % ĞŞ¸´ºÍÌæ»»¹Ü¶Î´ÎĞò
+        
+        
+%         Replace_pipes % Ìæ»»¹Ü¶Î
     end
     methods
         function obj = epanetx64pdd()
@@ -163,7 +173,7 @@ classdef epanetx64pdd < handle
             [filepath,filename,~] = fileparts(inpfile);
             rptfile = [filepath,filename,'.rpt'];
             libName = obj.lib_name;
-            epanetx64pdd.ENopen(inpfile,rptfile,'',libName)
+            epanetx64pdd.ENopen(inpfile,rptfile,'',libName);
         end
         function enClose(obj)
             [~] = epanetx64pdd.ENclose(obj.lib_name);
@@ -184,6 +194,13 @@ classdef epanetx64pdd < handle
         end
         function addPddParamter_Wagner_Hcritical(obj,node_index,Hcritical)
             obj.err.addPddParamter_Wagner_Hminimum = calllib (obj.lib_name,'ENsetnodevalue',node_index,121,Hcritical);
+        end
+    end
+    methods % recovery
+        function recovery(obj) % ×Ü»Ö¸´¹ı³Ì
+            
+        end
+        function schedule(obj) %
         end
     end
     methods(Static) % ·â×°epanetµÄ¸÷¸öº¯ÊıÃüÁî
